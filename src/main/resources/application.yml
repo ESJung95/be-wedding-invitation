@@ -24,5 +24,11 @@ spring:
         format_sql: true
         default_schema: wedding-invitation
 
+jwt:
+  admin:
+    secret: ${JWT_ADMIN_SECRET}
+    access-token-expiration: 3600000       # 1시간 (ms)
+    refresh-token-expiration: 1209600000   # 14일 (ms)
+
 server:
   port: 8080
