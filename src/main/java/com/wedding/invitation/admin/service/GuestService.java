@@ -62,6 +62,26 @@ public class GuestService {
         return toResponse(saved);
     }
 
+    @Transactional
+    public List<GuestCreateResponse> deactivate(List<Long> guestIds) {
+        if (guestIds == null || guestIds.isEmpty()) {
+            throw new CustomException(ErrorCode.INVALID_INPUT);
+        }
+
+        return guestIds.stream()
+                .map(this::deactivateOne)
+                .toList();
+    }
+
+    private GuestCreateResponse deactivateOne(Long guestId) {
+        Guest guest = guestRepository.findById(guestId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+
+        guest.deactivate();
+
+        return toResponse(guest);
+    }
+
     private GuestCreateResponse toResponse(Guest guest) {
         return new GuestCreateResponse(
                 guest.getId(),

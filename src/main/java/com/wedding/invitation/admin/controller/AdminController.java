@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,6 +65,12 @@ public class AdminController {
             @RequestParam(required = false) Guest.Side side
     ) {
         List<GuestCreateResponse> response = guestService.getGuests(active, side);
+        return ApiResponse.success(response);
+    }
+
+    @PatchMapping("/guests/deactivate")
+    public ApiResponse<List<GuestCreateResponse>> deactivateGuests(@RequestBody List<Long> guestIds) {
+        List<GuestCreateResponse> response = guestService.deactivate(guestIds);
         return ApiResponse.success(response);
     }
 }
