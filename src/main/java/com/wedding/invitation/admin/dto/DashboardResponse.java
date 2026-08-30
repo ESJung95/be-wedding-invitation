@@ -1,0 +1,51 @@
+package com.wedding.invitation.admin.dto;
+
+public class DashboardResponse {
+
+    private final long totalGuestCount;
+    private final long activeGuestCount;
+    private final long totalViewCount;
+    private final long linkViewCount;
+    private final long qrViewCount;
+    private final long totalMessageCount;
+
+    public DashboardResponse(
+            long totalGuestCount,
+            long activeGuestCount,
+            long totalViewCount,
+            long linkViewCount,
+            long qrViewCount,
+            long totalMessageCount
+    ) {
+        this.totalGuestCount = totalGuestCount;
+        this.activeGuestCount = activeGuestCount;
+        this.totalViewCount = totalViewCount;
+        this.linkViewCount = linkViewCount;
+        this.qrViewCount = qrViewCount;
+        this.totalMessageCount = totalMessageCount;
+    }
+
+    public long getTotalGuestCount() {
+        return totalGuestCount;
+    }
+
+    public long getActiveGuestCount() {
+        return activeGuestCount;
+    }
+
+    public long getTotalViewCount() {
+        return totalViewCount;
+    }
+
+    public long getLinkViewCount() {
+        return linkViewCount;
+    }
+
+    public long getQrViewCount() {
+        return qrViewCount;
+    }
+
+    public long getTotalMessageCount() {
+        return totalMessageCount;
+    }
+}
