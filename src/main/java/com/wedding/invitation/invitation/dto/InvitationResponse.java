@@ -1,7 +1,9 @@
 package com.wedding.invitation.invitation.dto;
 
 import com.wedding.invitation.domain.Guest;
+import lombok.Getter;
 
+@Getter
 public class InvitationResponse {
 
     private final boolean personalized;
@@ -12,17 +14,5 @@ public class InvitationResponse {
         this.personalized = personalized;
         this.name = name;
         this.side = side;
-    }
-
-    public boolean isPersonalized() {
-        return personalized;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Guest.Side getSide() {
-        return side;
     }
 }

@@ -1,10 +1,12 @@
 package com.wedding.invitation.admin.dto;
 
 import com.wedding.invitation.domain.AccessType;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Getter
 public class RecentActivityResponse {
 
     private final List<RecentView> recentViews;
@@ -15,14 +17,7 @@ public class RecentActivityResponse {
         this.recentMessages = recentMessages;
     }
 
-    public List<RecentView> getRecentViews() {
-        return recentViews;
-    }
-
-    public List<RecentMessage> getRecentMessages() {
-        return recentMessages;
-    }
-
+    @Getter
     public static class RecentView {
         private final String guestName;
         private final AccessType accessType;
@@ -33,20 +28,9 @@ public class RecentActivityResponse {
             this.accessType = accessType;
             this.viewedAt = viewedAt;
         }
-
-        public String getGuestName() {
-            return guestName;
-        }
-
-        public AccessType getAccessType() {
-            return accessType;
-        }
-
-        public LocalDateTime getViewedAt() {
-            return viewedAt;
-        }
     }
 
+    @Getter
     public static class RecentMessage {
         private final String guestName;
         private final AccessType accessType;
@@ -58,22 +42,6 @@ public class RecentActivityResponse {
             this.accessType = accessType;
             this.content = content;
             this.createdAt = createdAt;
-        }
-
-        public String getGuestName() {
-            return guestName;
-        }
-
-        public AccessType getAccessType() {
-            return accessType;
-        }
-
-        public String getContent() {
-            return content;
-        }
-
-        public LocalDateTime getCreatedAt() {
-            return createdAt;
         }
     }
 }

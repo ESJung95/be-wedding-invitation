@@ -1,5 +1,8 @@
 package com.wedding.invitation.admin.dto;
 
+import lombok.Getter;
+
+@Getter
 public class LoginResponse {
 
     private final String accessToken;
@@ -10,17 +13,5 @@ public class LoginResponse {
         this.accessToken = accessToken;
         this.adminId = adminId;
         this.username = username;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public Long getAdminId() {
-        return adminId;
-    }
-
-    public String getUsername() {
-        return username;
     }
 }

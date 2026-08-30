@@ -3,7 +3,9 @@ package com.wedding.invitation.admin.dto;
 import com.wedding.invitation.domain.Guest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 
+@Getter
 public class GuestCreateRequest {
 
     @NotBlank(message = "이름을 입력해주세요.")
@@ -18,13 +20,5 @@ public class GuestCreateRequest {
     public GuestCreateRequest(String name, Guest.Side side) {
         this.name = name;
         this.side = side;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Guest.Side getSide() {
-        return side;
     }
 }

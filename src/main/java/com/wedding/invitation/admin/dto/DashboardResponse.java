@@ -1,5 +1,8 @@
 package com.wedding.invitation.admin.dto;
 
+import lombok.Getter;
+
+@Getter
 public class DashboardResponse {
 
     private final long totalGuestCount;
@@ -23,29 +26,5 @@ public class DashboardResponse {
         this.linkViewCount = linkViewCount;
         this.qrViewCount = qrViewCount;
         this.totalMessageCount = totalMessageCount;
-    }
-
-    public long getTotalGuestCount() {
-        return totalGuestCount;
-    }
-
-    public long getActiveGuestCount() {
-        return activeGuestCount;
-    }
-
-    public long getTotalViewCount() {
-        return totalViewCount;
-    }
-
-    public long getLinkViewCount() {
-        return linkViewCount;
-    }
-
-    public long getQrViewCount() {
-        return qrViewCount;
-    }
-
-    public long getTotalMessageCount() {
-        return totalMessageCount;
     }
 }

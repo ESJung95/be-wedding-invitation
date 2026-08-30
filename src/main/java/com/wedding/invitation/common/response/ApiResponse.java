@@ -1,7 +1,9 @@
 package com.wedding.invitation.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
 
+@Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
 
@@ -27,18 +29,7 @@ public class ApiResponse<T> {
         return new ApiResponse<>(false, null, new ErrorDetail(code, message));
     }
 
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public ErrorDetail getError() {
-        return error;
-    }
-
+    @Getter
     public static class ErrorDetail {
         private final String code;
         private final String message;
@@ -46,14 +37,6 @@ public class ApiResponse<T> {
         private ErrorDetail(String code, String message) {
             this.code = code;
             this.message = message;
-        }
-
-        public String getCode() {
-            return code;
-        }
-
-        public String getMessage() {
-            return message;
         }
     }
 }

@@ -1,9 +1,11 @@
 package com.wedding.invitation.admin.dto;
 
 import com.wedding.invitation.domain.AccessType;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class MessageResponse {
 
     private final Long id;
@@ -18,25 +20,5 @@ public class MessageResponse {
         this.accessType = accessType;
         this.content = content;
         this.createdAt = createdAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getGuestName() {
-        return guestName;
-    }
-
-    public AccessType getAccessType() {
-        return accessType;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 }

@@ -1,7 +1,9 @@
 package com.wedding.invitation.admin.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
 
+@Getter
 public class LoginRequest {
 
     @NotBlank(message = "아이디를 입력해주세요.")
@@ -16,13 +18,5 @@ public class LoginRequest {
     public LoginRequest(String username, String password) {
         this.username = username;
         this.password = password;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
     }
 }

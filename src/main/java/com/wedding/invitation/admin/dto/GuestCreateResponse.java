@@ -1,9 +1,11 @@
 package com.wedding.invitation.admin.dto;
 
 import com.wedding.invitation.domain.Guest;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class GuestCreateResponse {
 
     private final Long id;
@@ -20,29 +22,5 @@ public class GuestCreateResponse {
         this.token = token;
         this.isActive = isActive;
         this.createdAt = createdAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Guest.Side getSide() {
-        return side;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 }

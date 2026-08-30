@@ -3,7 +3,9 @@ package com.wedding.invitation.invitation.dto;
 import com.wedding.invitation.domain.AccessType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 
+@Getter
 public class MessageCreateRequest {
 
     private String token;
@@ -25,21 +27,5 @@ public class MessageCreateRequest {
         this.accessType = accessType;
         this.guestName = guestName;
         this.content = content;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public AccessType getAccessType() {
-        return accessType;
-    }
-
-    public String getGuestName() {
-        return guestName;
-    }
-
-    public String getContent() {
-        return content;
     }
 }
