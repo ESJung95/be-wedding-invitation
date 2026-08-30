@@ -4,6 +4,7 @@ import com.wedding.invitation.domain.Guest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GuestRepository extends JpaRepository<Guest, Long> {
 
@@ -18,4 +19,6 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
     List<Guest> findAllBySideOrderByNameAsc(Guest.Side side);
 
     List<Guest> findAllByIsActiveAndSideOrderByNameAsc(Boolean isActive, Guest.Side side);
+
+    Optional<Guest> findByTokenAndIsActiveTrue(String token);
 }
