@@ -5,10 +5,12 @@ import com.wedding.invitation.admin.dto.GuestCreateRequest;
 import com.wedding.invitation.admin.dto.GuestCreateResponse;
 import com.wedding.invitation.admin.dto.LoginRequest;
 import com.wedding.invitation.admin.dto.LoginResponse;
+import com.wedding.invitation.admin.dto.MessageResponse;
 import com.wedding.invitation.admin.dto.RecentActivityResponse;
 import com.wedding.invitation.admin.service.AuthService;
 import com.wedding.invitation.admin.service.DashboardService;
 import com.wedding.invitation.admin.service.GuestService;
+import com.wedding.invitation.admin.service.MessageService;
 import com.wedding.invitation.common.response.ApiResponse;
 import com.wedding.invitation.domain.Guest;
 import jakarta.validation.Valid;
@@ -33,6 +35,7 @@ public class AdminController {
     private final AuthService authService;
     private final DashboardService dashboardService;
     private final GuestService guestService;
+    private final MessageService messageService;
 
     @PostMapping("/login")
     public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
@@ -71,6 +74,12 @@ public class AdminController {
     @PatchMapping("/guests/deactivate")
     public ApiResponse<List<GuestCreateResponse>> deactivateGuests(@RequestBody List<Long> guestIds) {
         List<GuestCreateResponse> response = guestService.deactivate(guestIds);
+        return ApiResponse.success(response);
+    }
+
+    @GetMapping("/messages")
+    public ApiResponse<List<MessageResponse>> getMessages() {
+        List<MessageResponse> response = messageService.getMessages();
         return ApiResponse.success(response);
     }
 }
