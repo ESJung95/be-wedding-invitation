@@ -22,6 +22,10 @@ public class InvitationView {
     @JoinColumn(name = "guest_id", nullable = false)
     private Guest guest;
 
+    @Column(name = "access_type", nullable = false, length = 10)
+    @Enumerated(EnumType.STRING)
+    private AccessType accessType;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime viewedAt;
 
@@ -34,8 +38,9 @@ public class InvitationView {
     }
 
     @Builder
-    public InvitationView(Guest guest, String ipAddress) {
+    public InvitationView(Guest guest, AccessType accessType, String ipAddress) {
         this.guest = guest;
+        this.accessType = accessType;
         this.ipAddress = ipAddress;
     }
 }

@@ -22,6 +22,13 @@ public class Message {
     @JoinColumn(name = "guest_id", nullable = false)
     private Guest guest;
 
+    @Column(name = "guest_name", length = 50)
+    private String guestName;
+
+    @Column(name = "access_type", nullable = false, length = 10)
+    @Enumerated(EnumType.STRING)
+    private AccessType accessType;
+
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
@@ -37,8 +44,10 @@ public class Message {
     }
 
     @Builder
-    public Message(Guest guest, String content) {
+    public Message(Guest guest, String guestName, AccessType accessType, String content) {
         this.guest = guest;
+        this.guestName = guestName;
+        this.accessType = accessType;
         this.content = content;
         this.isVisible = true;
     }

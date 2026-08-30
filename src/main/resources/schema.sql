@@ -24,22 +24,6 @@ CREATE TABLE IF NOT EXISTS guest
     CONSTRAINT chk_guest_side CHECK (side IN ('GROOM', 'BRIDE'))
     );
 
-CREATE TABLE IF NOT EXISTS rsvp
-(
-    id          BIGSERIAL   NOT NULL,
-    guest_id    BIGINT,
-    guest_name  VARCHAR(50),
-    access_type VARCHAR(10) NOT NULL,
-    status      VARCHAR(10) NOT NULL,
-    created_at  TIMESTAMP   NOT NULL DEFAULT now(),
-    updated_at  TIMESTAMP   NOT NULL DEFAULT now(),
-    CONSTRAINT pk_rsvp PRIMARY KEY (id),
-    CONSTRAINT uq_rsvp_guest UNIQUE (guest_id),
-    CONSTRAINT fk_rsvp_guest FOREIGN KEY (guest_id) REFERENCES guest (id),
-    CONSTRAINT chk_rsvp_status CHECK (status IN ('ATTENDING', 'ABSENT')),
-    CONSTRAINT chk_rsvp_access_type CHECK (access_type IN ('LINK', 'QR'))
-    );
-
 CREATE TABLE IF NOT EXISTS message
 (
     id          BIGSERIAL   NOT NULL,
