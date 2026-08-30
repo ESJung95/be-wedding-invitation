@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 @Slf4j
 @RestControllerAdvice
@@ -17,6 +18,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleNoResourceFoundException(NoResourceFoundException e) {
         return ResponseEntity.status(ErrorCode.ENTITY_NOT_FOUND.getStatus())
                 .body(ApiResponse.error(ErrorCode.ENTITY_NOT_FOUND.getCode(), "요청한 경로를 찾을 수 없습니다."));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        return ResponseEntity.status(ErrorCode.INVALID_INPUT.getStatus())
+                .body(ApiResponse.error(ErrorCode.INVALID_INPUT.getCode(), "요청 형식이 올바르지 않습니다."));
     }
 
     @ExceptionHandler(CustomException.class)

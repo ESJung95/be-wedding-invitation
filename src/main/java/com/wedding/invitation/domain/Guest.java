@@ -12,7 +12,10 @@ import java.time.LocalDateTime;
 @Table(
         name = "guest",
         schema = "wedding-invitation",
-        uniqueConstraints = @UniqueConstraint(name = "uq_guest_token", columnNames = "token")
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uq_guest_token", columnNames = "token"),
+                @UniqueConstraint(name = "uq_guest_name", columnNames = "name")
+        }
 )
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

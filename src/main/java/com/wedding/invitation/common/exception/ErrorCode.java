@@ -12,7 +12,9 @@ public enum ErrorCode {
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_002", "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_003", "만료된 토큰입니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "AUTH_004", "접근 권한이 없습니다."),
-    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH_005", "아이디 또는 비밀번호가 올바르지 않습니다.");
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH_005", "아이디 또는 비밀번호가 올바르지 않습니다."),
+
+    DUPLICATE_GUEST_NAME(HttpStatus.CONFLICT, "GUEST_001", "이미 등록된 이름입니다.");
 
     private final HttpStatus status;
     private final String code;

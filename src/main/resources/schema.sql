@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS guest
     created_at TIMESTAMP   NOT NULL DEFAULT now(),
     CONSTRAINT pk_guest PRIMARY KEY (id),
     CONSTRAINT uq_guest_token UNIQUE (token),
+    CONSTRAINT uq_guest_name UNIQUE (name),
     CONSTRAINT chk_guest_side CHECK (side IN ('GROOM', 'BRIDE'))
     );
 
