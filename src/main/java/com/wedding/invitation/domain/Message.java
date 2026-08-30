@@ -19,7 +19,7 @@ public class Message {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "guest_id", nullable = false)
+    @JoinColumn(name = "guest_id")
     private Guest guest;
 
     @Column(name = "guest_name", length = 50)
