@@ -3,6 +3,7 @@ package com.wedding.invitation.admin.controller;
 import com.wedding.invitation.admin.dto.DashboardResponse;
 import com.wedding.invitation.admin.dto.LoginRequest;
 import com.wedding.invitation.admin.dto.LoginResponse;
+import com.wedding.invitation.admin.dto.RecentActivityResponse;
 import com.wedding.invitation.admin.service.AuthService;
 import com.wedding.invitation.admin.service.DashboardService;
 import com.wedding.invitation.common.response.ApiResponse;
@@ -31,6 +32,12 @@ public class AdminController {
     @GetMapping("/dashboard")
     public ApiResponse<DashboardResponse> getDashboard() {
         DashboardResponse response = dashboardService.getDashboard();
+        return ApiResponse.success(response);
+    }
+
+    @GetMapping("/dashboard/recent")
+    public ApiResponse<RecentActivityResponse> getRecentActivity() {
+        RecentActivityResponse response = dashboardService.getRecentActivity();
         return ApiResponse.success(response);
     }
 }

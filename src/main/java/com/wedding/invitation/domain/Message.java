@@ -32,9 +32,6 @@ public class Message {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(nullable = false)
-    private Boolean isVisible = true;
-
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -49,10 +46,5 @@ public class Message {
         this.guestName = guestName;
         this.accessType = accessType;
         this.content = content;
-        this.isVisible = true;
-    }
-
-    public void hide() {
-        this.isVisible = false;
     }
 }

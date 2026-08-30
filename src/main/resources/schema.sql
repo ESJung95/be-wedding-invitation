@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS message
     guest_name  VARCHAR(50),
     access_type VARCHAR(10) NOT NULL,
     content     TEXT        NOT NULL,
-    is_visible  BOOLEAN     NOT NULL DEFAULT true,
     created_at  TIMESTAMP   NOT NULL DEFAULT now(),
     CONSTRAINT pk_message PRIMARY KEY (id),
     CONSTRAINT fk_message_guest FOREIGN KEY (guest_id) REFERENCES guest (id),
