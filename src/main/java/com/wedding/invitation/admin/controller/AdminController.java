@@ -10,6 +10,7 @@ import com.wedding.invitation.admin.service.AuthService;
 import com.wedding.invitation.admin.service.DashboardService;
 import com.wedding.invitation.admin.service.GuestService;
 import com.wedding.invitation.common.response.ApiResponse;
+import com.wedding.invitation.domain.Guest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -53,6 +55,15 @@ public class AdminController {
     @PostMapping("/guests")
     public ApiResponse<List<GuestCreateResponse>> createGuests(@Valid @RequestBody List<GuestCreateRequest> requests) {
         List<GuestCreateResponse> response = guestService.create(requests);
+        return ApiResponse.success(response);
+    }
+
+    @GetMapping("/guests")
+    public ApiResponse<List<GuestCreateResponse>> getGuests(
+            @RequestParam(required = false) Boolean active,
+            @RequestParam(required = false) Guest.Side side
+    ) {
+        List<GuestCreateResponse> response = guestService.getGuests(active, side);
         return ApiResponse.success(response);
     }
 }

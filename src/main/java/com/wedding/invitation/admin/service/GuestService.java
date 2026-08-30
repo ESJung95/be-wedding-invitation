@@ -27,6 +27,23 @@ public class GuestService {
                 .toList();
     }
 
+    public List<GuestCreateResponse> getGuests(Boolean active, Guest.Side side) {
+        List<Guest> guests;
+        if (active != null && side != null) {
+            guests = guestRepository.findAllByIsActiveAndSideOrderByNameAsc(active, side);
+        } else if (active != null) {
+            guests = guestRepository.findAllByIsActiveOrderByNameAsc(active);
+        } else if (side != null) {
+            guests = guestRepository.findAllBySideOrderByNameAsc(side);
+        } else {
+            guests = guestRepository.findAllByOrderByNameAsc();
+        }
+
+        return guests.stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     private GuestCreateResponse createOne(GuestCreateRequest request) {
         if (guestRepository.existsByName(request.getName())) {
             throw new CustomException(ErrorCode.DUPLICATE_GUEST_NAME);
@@ -42,13 +59,17 @@ public class GuestService {
 
         Guest saved = guestRepository.save(guest);
 
+        return toResponse(saved);
+    }
+
+    private GuestCreateResponse toResponse(Guest guest) {
         return new GuestCreateResponse(
-                saved.getId(),
-                saved.getName(),
-                saved.getSide(),
-                saved.getToken(),
-                saved.getIsActive(),
-                saved.getCreatedAt()
+                guest.getId(),
+                guest.getName(),
+                guest.getSide(),
+                guest.getToken(),
+                guest.getIsActive(),
+                guest.getCreatedAt()
         );
     }
 }
