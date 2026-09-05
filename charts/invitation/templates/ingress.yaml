@@ -1,0 +1,33 @@
+{{- if .Values.ingress.enabled }}
+{{/*
+cert-manager 가 이 어노테이션을 보고 Certificate 를 대신 만든다(Certificate 를 직접 쓰지 않는
+이유: 호스트가 바뀔 때 Ingress 와 어긋날 수 있는 사본이 하나 줄어든다).
+발급이 끝나면 tls.secretName 에 인증서가 채워지고 nginx 가 그것을 집는다.
+*/}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "invitation.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "invitation.labels" . | nindent 4 }}
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.issuer | quote }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host | quote }}
+      secretName: {{ .Values.ingress.tlsSecretName }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "invitation.name" . }}
+                port:
+                  name: http
+{{- end }}

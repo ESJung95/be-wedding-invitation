@@ -1,0 +1,12 @@
+{{ include "invitation.name" . }} 배포됨 (ns: {{ .Release.Namespace }}, image: {{ include "invitation.image" . }})
+
+접근:
+  http://{{ "192.168.219.108" }}:{{ .Values.service.nodePort }}   (NodePort, 이 클러스터에 Ingress 없음)
+  클러스터 안: http://{{ include "invitation.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}
+
+확인:
+  kubectl -n {{ .Release.Namespace }} rollout status deploy/{{ include "invitation.name" . }}
+  kubectl -n {{ .Release.Namespace }} logs -l app.kubernetes.io/instance={{ .Release.Name }} -f
+
+DB 는 {{ .Values.database.host }}/{{ .Values.database.name }} 의 "wedding-invitation" 스키마다.
+차트는 스키마를 만들지 않는다: ddl-auto=validate 라 어긋나면 기동이 실패한다.
