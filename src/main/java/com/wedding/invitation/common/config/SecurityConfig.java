@@ -66,7 +66,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "https://kihan-eunsun.site",
                 "https://www.kihan-eunsun.site",
-                "http://localhost:5173"
+                "http://localhost:3000"
         ));
         configuration.setAllowedOriginPatterns(List.of("https://*.vercel.app"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
