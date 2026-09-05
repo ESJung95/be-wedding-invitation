@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "invitation.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "invitation.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: {{ .Values.strategy.type }}
+  selector:
+    matchLabels:
+      {{- include "invitation.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        # ConfigMap 이 바뀌면 파드를 다시 띄운다. envFrom 은 값이 바뀌어도 재기동을 유발하지
+        # 않아서, 이 해시가 없으면 DB 주소를 고쳐도 낡은 파드가 그대로 남는다.
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "invitation.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: invitation
+          image: {{ include "invitation.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: {{ include "invitation.name" . }}
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.postgresSecret }}
+                  key: {{ .Values.secrets.postgresPasswordKey }}
+            - name: JWT_ADMIN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.jwtSecret }}
+                  key: {{ .Values.secrets.jwtSecretKey }}
+            - name: JAVA_OPTS
+              value: {{ .Values.javaOpts | quote }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          # 프로브가 전부 tcpSocket 인 이유는 values.yaml probes 블록 주석 참고.
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: {{ .Values.probes.startup.periodSeconds }}
+            failureThreshold: {{ .Values.probes.startup.failureThreshold }}
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

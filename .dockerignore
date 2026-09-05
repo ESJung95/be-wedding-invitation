@@ -1,0 +1,11 @@
+# 이미지 빌드 컨텍스트에서 뺄 것. Dockerfile 이 COPY 하는 것은 gradlew, gradle/,
+# settings.gradle, build.gradle, src/ 뿐이므로 나머지는 전송만 늘린다.
+.git
+.gitignore
+.gitattributes
+build
+.gradle
+charts
+Dockerfile
+.dockerignore
+*.md

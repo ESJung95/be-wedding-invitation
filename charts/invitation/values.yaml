@@ -1,0 +1,105 @@
+# charts/invitation 기본값. DGX Spark 단일 노드(arm64) 의 admin 네임스페이스에 청첩장 API 1개.
+#
+# 이 파일에 비밀이 들어가지 않는다. DB 비밀번호는 postgres 가 이미 쓰고 있는
+# Secret(admin/postgres-secret) 을 그대로 참조하고, JWT 서명키만 별도 Secret 을 하나 만들어
+# existingSecret 으로 참조한다(README 의 '배포' 절 명령). 근거는 아래 secrets 블록.
+#
+# 네임스페이스는 admin 이다. 이 박스는 워크로드 간 ns 격리가 주는 것이 없어서 postgres, vLLM 과
+# 같은 곳에 둔다(k8s 레포 README '네임스페이스는 admin + agent 둘'). 같은 ns 라서 DB 비밀번호를
+# 복사하지 않고 원본 Secret 을 그대로 참조할 수 있다.
+
+# 레지스트리가 없다. 이미지는 호스트에서 빌드해 containerd 의 k8s.io 네임스페이스에 직접 적재하고
+# (README '이미지 빌드'), kubelet 이 그것을 찾아 쓴다. 그래서 pullPolicy 가 Never 다:
+# IfNotPresent 로 두면 태그를 재사용해 다시 빌드했을 때 kubelet 이 낡은 레이어를 그대로 쓸 수 있고,
+# Always 면 존재하지 않는 레지스트리를 찾아가 ErrImagePull 로 죽는다.
+image:
+  repository: wedding-invitation
+  tag: "" # 비우면 Chart.appVersion. 재배포마다 태그를 올리는 것이 롤백 가능한 유일한 방법이다
+  pullPolicy: Never
+
+replicaCount: 1
+
+# RollingUpdate 로 둔다. 상태가 전부 postgres 에 있고 PVC 를 잡지 않아서 신구 파드가 겹쳐도
+# 다투는 자원이 없다(Recreate 인 vllm/hermes 와 다른 점이다).
+strategy:
+  type: RollingUpdate
+
+# NodePort 는 Ingress 를 켠 뒤에도 남긴다. LAN 안에서 인증서/도메인/공유기를 거치지 않고
+# 앱만 찍어볼 수 있는 경로가 하나 있으면 장애 때 원인 범위를 절반으로 줄일 수 있다.
+service:
+  type: NodePort
+  port: 8080
+  nodePort: 30808
+
+# ── 외부 공개 ─────────────────────────────────────────────────────────────────
+# 2026-09-05 켬. 전제 둘은 클러스터 밖에 있다: (1) 공유기 80/443 -> 192.168.219.108 포워딩
+# (2) 가비아 A 레코드 api -> 공인 IP(DDNS 없이 고정값, 변경은 Hermes 가 5분 크론으로 감시).
+# 둘이 아직 없어도 켜 두는 것이 안전한 이유: cert-manager 는 자체 사전 점검(DNS 해석 +
+# 챌린지 URL 도달)이 통과한 뒤에야 Let's Encrypt 에 검증을 요청하므로, 준비 전에는 prod 의
+# '시간당 5회 실패 검증' 레이트리밋을 소모하지 않고 기다린다. 발급 실패 시 재시도 간격도
+# 1시간부터 지수 증가라 한 번 막혀도 한도를 넘지 않는다.
+# staging 발급자는 두지 않는다(2026-09-05 결정). 그 역할이던 '80 이 밖에서 통하는가' 는
+# 외부(LTE)에서 http://api.kihan-eunsun.site 가 404/308 을 돌려주는지로 대신 확인한다.
+ingress:
+  enabled: true
+  className: nginx
+  host: api.kihan-eunsun.site
+  # ClusterIssuer 이름. manifests/ingress/clusterissuer.yaml (k8s 레포) 이 정의한다.
+  issuer: letsencrypt-prod
+  tlsSecretName: invitation-tls
+
+# ── DB ────────────────────────────────────────────────────────────────────────
+# 이미 존재하는 것을 가리키기만 한다. 스키마(wedding-invitation) 와 테이블 4개는 이미 만들어져 있고
+# 앱은 ddl-auto=validate 라 스키마가 어긋나면 기동 자체가 실패한다(조용히 마이그레이션하지 않는다).
+# src/main/resources/schema.sql 이 원본이며 spring.sql.init.mode=never 라 앱이 실행하지 않는다.
+database:
+  host: postgres.admin.svc.cluster.local
+  port: 5432
+  name: kihan_eunsun
+  username: postgres
+
+secrets:
+  # DB 비밀번호. postgres StatefulSet 이 POSTGRES_PASSWORD 로 읽는 바로 그 Secret 을 재사용한다.
+  # 복사본을 만들지 않는 이유: 복사본은 원본이 회전될 때 조용히 낡는다(그리고 그 사실을
+  # 앱이 죽고 나서야 알게 된다). 같은 ns 라서 참조가 가능하다.
+  postgresSecret: postgres-secret
+  postgresPasswordKey: password
+
+  # JWT 서명키. Secret 을 차트가 만들지 않는다(helm template 이 렌더할 때마다 값이 바뀌거나,
+  # values 에 비밀이 들어가게 된다). README 의 명령으로 한 번 만들고 여기서는 이름만 참조한다.
+  # 키 길이는 32바이트 이상이어야 한다: JwtTokenProvider 가 UTF-8 바이트를 그대로
+  # Keys.hmacShaKeyFor 에 넘겨서, 짧으면 기동 시점에 예외로 죽는다.
+  jwtSecret: invitation-secret
+  jwtSecretKey: JWT_ADMIN_SECRET
+
+# JAVA_OPTS. 컨테이너 메모리 limit 기준으로 힙을 잡게 하고(고정 -Xmx 대신 MaxRAMPercentage),
+# 타임존은 Asia/Seoul 로 고정한다: created_at 이 DB 의 now() 와 앱의 LocalDateTime 양쪽에서
+# 만들어지는데 둘이 다른 존이면 목록 정렬이 어긋난다.
+javaOpts: "-XX:MaxRAMPercentage=75.0 -Duser.timezone=Asia/Seoul"
+
+# 통합메모리 박스라 request 가 곧 GPU 가 못 쓰는 메모리다. 붙잡는 양을 정직하게 신고한다
+# (k8s 레포 README '메모리' 절). limit 을 두는 것은 vLLM 과 반대인데, 이쪽은 힙 상한이
+# 명확한 JVM 이라 limit 이 있어야 MaxRAMPercentage 가 기준으로 삼을 값을 갖는다.
+resources:
+  requests:
+    cpu: 200m
+    memory: 512Mi
+  limits:
+    memory: 1Gi
+
+# actuator 의존성이 없어서 HTTP 헬스 엔드포인트가 없다(있더라도 SecurityConfig 가 막는다).
+# 그래서 TCP 소켓으로 본다: 포트가 열렸다 = Tomcat 이 떴다 = 스프링 컨텍스트가 완성됐다.
+# DB 검증 실패는 컨텍스트 생성 중에 나므로 포트가 열리기 전이고, 이 프로브에 걸린다.
+probes:
+  # 기동 상한 = failureThreshold x periodSeconds. JVM + JPA validate 로 30초 안팎이 보통이다.
+  startup:
+    periodSeconds: 5
+    failureThreshold: 30
+  readiness:
+    periodSeconds: 10
+  liveness:
+    periodSeconds: 20
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
